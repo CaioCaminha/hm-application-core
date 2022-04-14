@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 
 public interface HomeManagerService {
 
-    ResponseEntity<ResponseDto> getPrice(PropertyDto propertyDto);
+    ResponseEntity<Object> registerProperty(PropertyDto propertyDto);
 
     ResponseEntity<ResponseDto> comparatePrice(ComparingProperty comparingProperty);
 

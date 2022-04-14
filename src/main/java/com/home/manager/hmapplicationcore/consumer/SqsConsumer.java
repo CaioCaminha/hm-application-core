@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class SqsConsumer {
 
-    @SqsListener(value = "home-manager",deletionPolicy = SqsMessageDeletionPolicy.ON_SUCCESS)
+    @SqsListener(value = "home-manager-processed-messages", deletionPolicy = SqsMessageDeletionPolicy.ON_SUCCESS)
     public void processMessage(String message){
         System.out.println(message);
     }

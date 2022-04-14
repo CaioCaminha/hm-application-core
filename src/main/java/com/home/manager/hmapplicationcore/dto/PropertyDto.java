@@ -16,5 +16,5 @@ public class PropertyDto {
     private String neighborhood;
 
     @NotEmpty
-    private BigDecimal size;
+    private Double size;
 }
