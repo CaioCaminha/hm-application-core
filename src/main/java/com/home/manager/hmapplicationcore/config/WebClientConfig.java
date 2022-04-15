@@ -16,24 +16,15 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class WebClientConfig {
 
-    @Value("${hm.pricing.url}")
+
     private String BASE_URL;
 
     private static final int TIMEOUT = 3000;
 
     @Bean
-    public WebClient webClientWithTimeout() {
-        final var tcpClient = TcpClient
-                .create()
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, TIMEOUT)
-                .doOnConnected(connection -> {
-                    connection.addHandlerLast(new ReadTimeoutHandler(TIMEOUT, TimeUnit.MILLISECONDS));
-                    connection.addHandlerLast(new WriteTimeoutHandler(TIMEOUT, TimeUnit.MILLISECONDS));
-                });
-
+    public WebClient webClient() {
         return WebClient.builder()
                 .baseUrl(BASE_URL)
-                .clientConnector(new ReactorClientHttpConnector(HttpClient.from(tcpClient)))
                 .build();
     }
 
