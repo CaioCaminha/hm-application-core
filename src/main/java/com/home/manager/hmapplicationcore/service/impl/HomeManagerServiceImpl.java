@@ -33,7 +33,7 @@ public class HomeManagerServiceImpl implements HomeManagerService {
     private final String pricingUrl = "https://l459kl9if8.execute-api.us-east-1.amazonaws.com/prod";
 
     public HomeManagerServiceImpl(WebClient.Builder webClientBuilder, SqsPublisher sqsPublisher, NeighborhoodRepository neighborhoodRepository){
-        sqsPublisher = sqsPublisher;
+        this.sqsPublisher = sqsPublisher;
         repository = neighborhoodRepository;
         webClient = webClientBuilder.build();
     }
@@ -41,8 +41,11 @@ public class HomeManagerServiceImpl implements HomeManagerService {
 
     @Override
     public ResponseEntity<Object> registerProperty(PropertyDto propertyDto) throws Exception {
+        Gson gson = new Gson();
         NeighborhoodEntity propertie = new NeighborhoodEntity();
         Optional<NeighborhoodEntity> optionalPropertie = repository.findByName(propertyDto.getNeighborhood());
+        Message message = new Message();
+
 
         if(optionalPropertie.isPresent()){
             propertie = optionalPropertie.get();
@@ -53,6 +56,12 @@ public class HomeManagerServiceImpl implements HomeManagerService {
                                     .body(Mono.just(pricingDto), PricingDto.class)
                                     .retrieve()
                                     .bodyToMono(PricingResponseDto.class).toFuture().get();
+
+            message.setId(String.valueOf(Math.random()));
+            message.setBody(gson.toJson(response));
+            this.sqsPublisher.sendMessage(message);
+
+
             return ResponseEntity.created(new URI("")).body(response);
         }else {
             throw new Exception("Was not possible get the response from princing API");
